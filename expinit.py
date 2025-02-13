@@ -6,8 +6,8 @@ import subprocess
 import termios
 import tty
 
-default_libc = "/usr/lib/x86_64-linux-gnu/libc.so.6"
-default_ld = "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
+libc = "/usr/lib/x86_64-linux-gnu/libc.so.6"
+ld = "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
 
 def isElf(fp):
     try:
@@ -68,11 +68,10 @@ if __name__ == "__main__":
             case "n":
                 continue
 
-    libc = ""
     if len(elfs["libc"]) == 0:
-        match gc(f"using default libc:{default_libc}"):
+        match gc(f"using default libc:{libc}"):
             case "y":
-                libc = default_libc
+                libc = libc
             case "n":
                 libc = ""
     else:
@@ -84,11 +83,10 @@ if __name__ == "__main__":
                 case "n":
                     continue
 
-    ld = ""
     if len(elfs["ld"]) == 0:
-        match gc(f"using default ld:{default_libc}"):
+        match gc(f"using default ld:{ld}"):
             case "y":
-                ld = default_ld
+                ld = ld 
             case "n":
                 ld = ""
     else:
@@ -114,11 +112,11 @@ if __name__ == "__main__":
             PORT = int(nc.split(" ")[1])
     else:
         print(f"✅ using default config (127.0.0.1:9999)")
-
+    
     swaplist = {
-        "__ELFPATH":elf.split("/")[-1],
-        "__LIBCPATH":libc.split("/")[-1],
-        "__LDPATH":ld.split("/")[-1],
+        "__ELFPATH":elf.replace(chaldir+"/",""),
+        "__LIBCPATH":libc.replace(chaldir+"/",""),
+        "__LDPATH":ld.replace(chaldir+"/",""),
         "__HOST":HOST,
         "__PORT":str(PORT)
     }
