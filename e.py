@@ -1,9 +1,9 @@
 from pwn import *
 import sys
 
-e = ELF("__ELFPATH")
-libc = ELF("__LIBCPATH")
-ld = ELF("__LDPATH")
+e = ELF("__ELFPATH",checksec=False)
+libc = ELF("__LIBCPATH",checksec=False)
+ld = ELF("__LDPATH",checksec=False)
 
 nc = "nc __HOST __PORT"
 HOST = nc.split(" ")[1]
@@ -15,7 +15,6 @@ g_script = """
 """
 
 context.binary = e
-log.level = "debug"
 if len(sys.argv) > 1:
     io = remote(host=HOST,port=PORT)
 else:
@@ -34,4 +33,9 @@ pu32= lambda b : u32(b.ljust(4,b"\0"))
 pu64= lambda b : u64(b.ljust(8,b"\0"))
 hlog= lambda i : print(f"[*]{hex(i)}")
 shell = lambda : io.interactive()
+payload = b""
+def pay64(adr:int):global payload;payload = p64(adr)
+def add64(adr:int):global payload;payload+= p64(adr)
+def paybyte(data:bytes):global payload;payload = data
+def addbyte(data:bytes):global payload;payload+= data
 
